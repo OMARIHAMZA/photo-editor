@@ -84,8 +84,8 @@ public class DrawingOperation {
     }
 
     public void draw() {
-        context.setFill(Paint.valueOf("#000000"));
-        context.setLineWidth(1);
+        context.setStroke(paint);
+        context.setLineWidth(width);
         context.strokeLine(startX, startY, endX, endY);
     }
 }

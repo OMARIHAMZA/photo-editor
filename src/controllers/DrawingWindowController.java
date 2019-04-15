@@ -1,22 +1,34 @@
 package controllers;
 
-import com.jfoenix.controls.JFXToolbar;
+import com.jfoenix.controls.JFXSlider;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.scene.transform.Transform;
+import javafx.stage.FileChooser;
 import models.DrawingOperation;
 
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static javafx.scene.input.MouseEvent.*;
 
@@ -25,28 +37,36 @@ public class DrawingWindowController extends MasterController {
 
     public VBox rootView;
 
-    private JFXToolbar mToolbar;
-
     @FXML
     private Canvas drawingCanvas;
+
+    @FXML
+    private ColorPicker colorPicker;
+
+    @FXML
+    private JFXSlider sizeSlider;
+
+    @FXML
+    private StackPane stackPane;
+
+    @FXML
+    private ImageView imageView;
+
+    private String imagePath;
 
     //Drawing Items
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
     private GraphicsContext graphicsContext;
     private int currentFigure = 0;
     private double startX = 0, startY = 0, endX = 0, endY = 0;
-    @FXML
-    private ImageView imageView;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setRootView(rootView);
-        setupToolbar(mToolbar);
         graphicsContext = drawingCanvas.getGraphicsContext2D();
-        testPerformance(50);
-        imageView.setImage(new Image(new File("C:/Users/Asus/Pictures/tuf.jpg").toURI().toString()));
         drawingCanvas.toFront();
+        imageView.fitWidthProperty().bind(stackPane.widthProperty());
         drawingCanvas.addEventFilter(MOUSE_PRESSED, this::mousePressed);
         drawingCanvas.addEventFilter(MOUSE_RELEASED, this::mouseReleased);
         drawingCanvas.addEventFilter(MOUSE_DRAGGED, this::mouseDragged);
@@ -68,39 +88,67 @@ public class DrawingWindowController extends MasterController {
     }
 
     private void drawLine() {
-        System.out.println(drawingOperations.size());
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
-        drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext, startX, startY, endX, endY, Paint.valueOf("#000000"), 1, 0));
+        drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
+                startX, startY, endX, endY,
+                Paint.valueOf(colorPicker.getValue().toString()),
+                (int) sizeSlider.getValue(), 0));
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();
         }
     }
 
-    private void testPerformance(int count) {
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-            for (int i = 0; i < count; i++) {
-                drawingOperations.put(i, new DrawingOperation(
-                        graphicsContext,
-                        new Random().nextInt(600),
-                        new Random().nextInt(400),
-                        new Random().nextInt(600),
-                        new Random().nextInt(400),
-                        Paint.valueOf("#000000"),
-                        1,
-                        1
-                ));
-                drawingOperations.get(i).draw();
-            }
-            Platform.runLater(() -> showSnackBar(count + " Lines were successfully drawn"));
-
-        }).start();
+    @FXML
+    void closeApplication(ActionEvent event) {
+        Platform.exit();
     }
 
+    @FXML
+    void exportImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
 
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File file = fileChooser.showSaveDialog(rootView.getScene().getWindow());
+
+        if (file != null) {
+            try {
+                WritableImage writableImage = pixelScaleSnapshot(stackPane, 2);
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(renderedImage, "png", file);
+                showMessage("Image Saved", false);
+            } catch (IOException ex) {
+                Logger.getLogger(DrawingWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private WritableImage pixelScaleSnapshot(StackPane pane, double pixelScale) {
+        WritableImage writableImage = new WritableImage((int) Math.rint(pixelScale * pane.getWidth()), (int) Math.rint(pixelScale * pane.getHeight()));
+        SnapshotParameters spa = new SnapshotParameters();
+        spa.setTransform(Transform.scale(pixelScale, pixelScale));
+        return pane.snapshot(spa, writableImage);
+    }
+
+    @FXML
+    void loadImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+
+        FileChooser.ExtensionFilter extensionFilter =
+                new FileChooser.ExtensionFilter("Images", "*.png", "*jpg", "*jpeg");
+
+        fileChooser.getExtensionFilters().add(extensionFilter);
+
+        File file = fileChooser.showOpenDialog(rootView.getScene().getWindow());
+
+        if (file != null) {
+            imageView.setImage(new Image(file.toURI().toString()));
+        } else {
+            showMessage("Select a valid image", true);
+        }
+
+    }
 }
