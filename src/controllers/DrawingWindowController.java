@@ -1,5 +1,6 @@
 package controllers;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -25,8 +26,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,13 +52,22 @@ public class DrawingWindowController extends MasterController {
     @FXML
     private ImageView imageView;
 
-    private String imagePath;
+    @FXML
+    private JFXButton chooseImageButton;
+
+    @FXML
+    private VBox getStartedLayout;
+
+    @FXML
+    private JFXButton freeDrawingButton;
 
     //Drawing Items
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
     private GraphicsContext graphicsContext;
-    private int currentFigure = 0;
+    private int currentFigure = 1;
     private double startX = 0, startY = 0, endX = 0, endY = 0;
+    private Set<Integer> historySet = new LinkedHashSet<>();
+    private HashMap<Integer, DrawingOperation> deletedOperations = new HashMap<>();
 
 
     @Override
@@ -70,6 +79,11 @@ public class DrawingWindowController extends MasterController {
         drawingCanvas.addEventFilter(MOUSE_PRESSED, this::mousePressed);
         drawingCanvas.addEventFilter(MOUSE_RELEASED, this::mouseReleased);
         drawingCanvas.addEventFilter(MOUSE_DRAGGED, this::mouseDragged);
+        getStartedLayout.toFront();
+
+        freeDrawingButton.setOnMouseClicked(v -> {
+            getStartedLayout.setVisible(false);
+        });
     }
 
     private void mousePressed(MouseEvent mouseEvent) {
@@ -84,6 +98,7 @@ public class DrawingWindowController extends MasterController {
     private void mouseDragged(MouseEvent mouseEvent) {
         this.endX = mouseEvent.getX();
         this.endY = mouseEvent.getY();
+        historySet.add(currentFigure);
         drawLine();
     }
 
@@ -96,6 +111,7 @@ public class DrawingWindowController extends MasterController {
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();
         }
+        System.err.println(historySet);
     }
 
 
@@ -133,6 +149,7 @@ public class DrawingWindowController extends MasterController {
         return pane.snapshot(spa, writableImage);
     }
 
+
     @FXML
     void loadImage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -146,9 +163,38 @@ public class DrawingWindowController extends MasterController {
 
         if (file != null) {
             imageView.setImage(new Image(file.toURI().toString()));
+            getStartedLayout.setVisible(false);
         } else {
             showMessage("Select a valid image", true);
         }
 
+    }
+
+    @FXML
+    void redoStep(ActionEvent event) {
+
+    }
+
+    @FXML
+    void undoStep(ActionEvent event) {
+        if (drawingOperations.isEmpty()) return;
+        if (drawingOperations.size() == 1){
+            // TODO: 4/17/2019 DISABLE THE UNDO BUUTTON
+        }
+        currentFigure -= 1;
+        int figureToDelete = drawingOperations.size();
+        System.err.println("DD" + figureToDelete);
+        DrawingOperation drawingOperation = drawingOperations.remove(figureToDelete);
+        System.err.println(drawingOperations);
+        deletedOperations.put(figureToDelete, drawingOperation);
+        graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+        for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
+            entry.getValue().draw();
+        }
+    }
+
+    private String getImageSize(final File file) {
+        Image image = new Image(file.toURI().toString());
+        return image.getWidth() + " " + image.getHeight();
     }
 }
