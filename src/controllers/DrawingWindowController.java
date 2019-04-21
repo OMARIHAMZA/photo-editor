@@ -16,6 +16,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
@@ -67,6 +68,9 @@ public class DrawingWindowController extends MasterController {
     @FXML
     private JFXButton linesTool;
 
+    @FXML
+    private JFXButton eraserTool;
+
     //Drawing Items
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
     private GraphicsContext graphicsContext;
@@ -74,7 +78,7 @@ public class DrawingWindowController extends MasterController {
     private double startX = 0, startY = 0, endX = 0, endY = 0;
     private Set<Integer> historySet = new LinkedHashSet<>();
     private HashMap<Integer, DrawingOperation> deletedOperations = new HashMap<>();
-    private DrawingOperation.FigureType figureType = DrawingOperation.FigureType.LINE;
+    private DrawingOperation.DrawingType drawingType = DrawingOperation.DrawingType.LINE;
 
 
     @Override
@@ -90,12 +94,13 @@ public class DrawingWindowController extends MasterController {
 
         freeDrawingButton.setOnMouseClicked(v -> getStartedLayout.setVisible(false));
 
-        linesTool.setOnMouseClicked(v -> figureType = DrawingOperation.FigureType.LINE);
-        pencilTool.setOnMouseClicked(v -> figureType = DrawingOperation.FigureType.DOT);
+        linesTool.setOnMouseClicked(v -> drawingType = DrawingOperation.DrawingType.LINE);
+        pencilTool.setOnMouseClicked(v -> drawingType = DrawingOperation.DrawingType.DOT);
+        eraserTool.setOnMouseClicked(v -> drawingType = DrawingOperation.DrawingType.ERASER);
     }
 
     private void mousePressed(MouseEvent mouseEvent) {
-        if (figureType == DrawingOperation.FigureType.LINE) {
+        if (drawingType == DrawingOperation.DrawingType.LINE) {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
         }
@@ -106,10 +111,10 @@ public class DrawingWindowController extends MasterController {
     }
 
     private void mouseDragged(MouseEvent mouseEvent) {
-        if (figureType == DrawingOperation.FigureType.LINE) {
+        if (drawingType == DrawingOperation.DrawingType.LINE) {
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
-        } else if (figureType == DrawingOperation.FigureType.DOT) {
+        } else if (drawingType == DrawingOperation.DrawingType.DOT || drawingType == DrawingOperation.DrawingType.ERASER) {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
             this.endX = mouseEvent.getX();
@@ -123,7 +128,7 @@ public class DrawingWindowController extends MasterController {
     private void drawLine() {
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
-                figureType,
+                drawingType,
                 startX, startY, endX, endY,
                 Paint.valueOf(colorPicker.getValue().toString()),
                 (int) sizeSlider.getValue()));

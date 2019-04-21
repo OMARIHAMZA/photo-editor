@@ -5,24 +5,24 @@ import javafx.scene.paint.Paint;
 
 public class DrawingOperation {
 
-    public enum FigureType {
+    public enum DrawingType {
 
-        LINE, DOT
+        LINE, DOT, ERASER
 
     }
 
     private GraphicsContext context;
-    private FigureType figureType;
+    private DrawingType drawingType;
     private double startX, startY;
     private double endX, endY;
     private int width;
     private Paint stroke;
 
-    public DrawingOperation(GraphicsContext context, FigureType figureType, double startX, double startY, double endX, double endY, Paint stroke, int width) {
+    public DrawingOperation(GraphicsContext context, DrawingType drawingType, double startX, double startY, double endX, double endY, Paint stroke, int width) {
         this.context = context;
         this.startX = startX;
         this.startY = startY;
-        this.figureType = figureType;
+        this.drawingType = drawingType;
         this.endX = endX;
         this.endY = endY;
         this.width = width;
@@ -73,6 +73,6 @@ public class DrawingOperation {
     public void draw() {
         context.setStroke(stroke);
         context.setLineWidth(width);
-        context.strokeLine(startX, startY, endX, endY);
+            context.strokeLine(startX, startY, endX, endY);
     }
 }
