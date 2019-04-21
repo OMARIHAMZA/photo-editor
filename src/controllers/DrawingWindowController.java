@@ -13,6 +13,7 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.IntBuffer;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -187,6 +189,15 @@ public class DrawingWindowController extends MasterController {
         if (file != null) {
             imageView.setImage(new Image(file.toURI().toString()));
             getStartedLayout.setVisible(false);
+
+            /*int pixels[] = new int[(int) (imageView.getImage().getWidth() * imageView.getImage().getHeight())];
+
+            imageView.getImage().getPixelReader().getPixels(0,0,
+                    (int) imageView.getImage().getWidth(),
+                    (int) imageView.getImage().getHeight(),
+                    imageView.getImage().getPixelReader().getPixelFormat(),
+                    pixels,
+                    1);*/
         } else {
             showMessage("Select a valid image", true);
         }
