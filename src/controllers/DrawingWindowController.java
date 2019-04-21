@@ -61,6 +61,12 @@ public class DrawingWindowController extends MasterController {
     @FXML
     private JFXButton freeDrawingButton;
 
+    @FXML
+    private JFXButton pencilTool;
+
+    @FXML
+    private JFXButton linesTool;
+
     //Drawing Items
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
     private GraphicsContext graphicsContext;
@@ -68,6 +74,7 @@ public class DrawingWindowController extends MasterController {
     private double startX = 0, startY = 0, endX = 0, endY = 0;
     private Set<Integer> historySet = new LinkedHashSet<>();
     private HashMap<Integer, DrawingOperation> deletedOperations = new HashMap<>();
+    private DrawingOperation.FigureType figureType = DrawingOperation.FigureType.LINE;
 
 
     @Override
@@ -81,14 +88,17 @@ public class DrawingWindowController extends MasterController {
         drawingCanvas.addEventFilter(MOUSE_DRAGGED, this::mouseDragged);
         getStartedLayout.toFront();
 
-        freeDrawingButton.setOnMouseClicked(v -> {
-            getStartedLayout.setVisible(false);
-        });
+        freeDrawingButton.setOnMouseClicked(v -> getStartedLayout.setVisible(false));
+
+        linesTool.setOnMouseClicked(v -> figureType = DrawingOperation.FigureType.LINE);
+        pencilTool.setOnMouseClicked(v -> figureType = DrawingOperation.FigureType.DOT);
     }
 
     private void mousePressed(MouseEvent mouseEvent) {
-        this.startX = mouseEvent.getX();
-        this.startY = mouseEvent.getY();
+        if (figureType == DrawingOperation.FigureType.LINE) {
+            this.startX = mouseEvent.getX();
+            this.startY = mouseEvent.getY();
+        }
     }
 
     private void mouseReleased(MouseEvent mouseEvent) {
@@ -96,8 +106,16 @@ public class DrawingWindowController extends MasterController {
     }
 
     private void mouseDragged(MouseEvent mouseEvent) {
-        this.endX = mouseEvent.getX();
-        this.endY = mouseEvent.getY();
+        if (figureType == DrawingOperation.FigureType.LINE) {
+            this.endX = mouseEvent.getX();
+            this.endY = mouseEvent.getY();
+        } else if (figureType == DrawingOperation.FigureType.DOT) {
+            this.startX = mouseEvent.getX();
+            this.startY = mouseEvent.getY();
+            this.endX = mouseEvent.getX();
+            this.endY = mouseEvent.getY();
+            currentFigure += 1;
+        }
         historySet.add(currentFigure);
         drawLine();
     }
@@ -105,23 +123,23 @@ public class DrawingWindowController extends MasterController {
     private void drawLine() {
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
+                figureType,
                 startX, startY, endX, endY,
                 Paint.valueOf(colorPicker.getValue().toString()),
-                (int) sizeSlider.getValue(), 0));
+                (int) sizeSlider.getValue()));
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();
         }
-        System.err.println(historySet);
     }
 
 
     @FXML
-    void closeApplication(ActionEvent event) {
+    void closeApplication() {
         Platform.exit();
     }
 
     @FXML
-    void exportImage(ActionEvent event) {
+    void exportImage() {
         FileChooser fileChooser = new FileChooser();
 
         FileChooser.ExtensionFilter extFilter =
@@ -178,7 +196,7 @@ public class DrawingWindowController extends MasterController {
     @FXML
     void undoStep(ActionEvent event) {
         if (drawingOperations.isEmpty()) return;
-        if (drawingOperations.size() == 1){
+        if (drawingOperations.size() == 1) {
             // TODO: 4/17/2019 DISABLE THE UNDO BUUTTON
         }
         currentFigure -= 1;

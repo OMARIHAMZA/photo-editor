@@ -1,28 +1,30 @@
 package models;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
-
-import java.io.File;
-import java.net.URI;
 
 public class DrawingOperation {
 
+    public enum FigureType {
+
+        LINE, DOT
+
+    }
+
     private GraphicsContext context;
+    private FigureType figureType;
     private double startX, startY;
     private double endX, endY;
-    private Paint paint;
     private int width;
-    private int stroke;
+    private Paint stroke;
 
-    public DrawingOperation(GraphicsContext context, double startX, double startY, double endX, double endY, Paint paint, int width, int stroke) {
+    public DrawingOperation(GraphicsContext context, FigureType figureType, double startX, double startY, double endX, double endY, Paint stroke, int width) {
         this.context = context;
         this.startX = startX;
         this.startY = startY;
+        this.figureType = figureType;
         this.endX = endX;
         this.endY = endY;
-        this.paint = paint;
         this.width = width;
         this.stroke = stroke;
     }
@@ -59,14 +61,6 @@ public class DrawingOperation {
         this.endY = endY;
     }
 
-    public Paint getPaint() {
-        return paint;
-    }
-
-    public void setPaint(Paint paint) {
-        this.paint = paint;
-    }
-
     public int getWidth() {
         return width;
     }
@@ -75,16 +69,9 @@ public class DrawingOperation {
         this.width = width;
     }
 
-    public int getStroke() {
-        return stroke;
-    }
-
-    public void setStroke(int stroke) {
-        this.stroke = stroke;
-    }
 
     public void draw() {
-        context.setStroke(paint);
+        context.setStroke(stroke);
         context.setLineWidth(width);
         context.strokeLine(startX, startY, endX, endY);
     }
