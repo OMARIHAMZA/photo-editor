@@ -106,6 +106,10 @@ public class DrawingWindowController extends MasterController {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
         }
+        else {
+            this.endX = mouseEvent.getX();
+            this.endY = mouseEvent.getY();
+        }
     }
 
     private void mouseReleased(MouseEvent mouseEvent) {
@@ -117,8 +121,8 @@ public class DrawingWindowController extends MasterController {
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
         } else if (drawingType == DrawingOperation.DrawingType.DOT || drawingType == DrawingOperation.DrawingType.ERASER) {
-            this.startX = mouseEvent.getX();
-            this.startY = mouseEvent.getY();
+            this.startX = endX;
+            this.startY = endY;
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
             currentFigure += 1;
