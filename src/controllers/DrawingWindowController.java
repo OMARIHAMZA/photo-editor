@@ -266,7 +266,7 @@ public class DrawingWindowController extends MasterController {
                 magentaVis = 255 - Math.round(magentaPixel * 255);
                 yellowVis = 255 - Math.round(yellowPixel * 255);
                 keyVis = 255 - Math.round(keyPixel * 255);
-                cmykPixel.setColor(i, j, new Color(cyanPixel, magentaPixel, yellowPixel, keyPixel));
+                cmykPixel.setColor(i, j, new Color(cyanVis, magentaVis, yellowVis, keyVis));
             }
         }
         imageView.setImage(cmykImage);
