@@ -10,10 +10,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.image.WritablePixelFormat;
+import javafx.scene.image.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -24,6 +21,7 @@ import javafx.stage.FileChooser;
 import models.DrawingOperation;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -105,8 +103,7 @@ public class DrawingWindowController extends MasterController {
         if (drawingType == DrawingOperation.DrawingType.LINE) {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
-        }
-        else {
+        } else {
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
         }
@@ -234,5 +231,44 @@ public class DrawingWindowController extends MasterController {
     private String getImageSize(final File file) {
         Image image = new Image(file.toURI().toString());
         return image.getWidth() + " " + image.getHeight();
+    }
+
+    private void argb2Cmyk() {
+        Image rgbImage = imageView.getImage();
+        int width = (int) rgbImage.getWidth();
+        int height = (int) rgbImage.getHeight();
+        WritableImage cmykImage = new WritableImage(width, height);
+        PixelReader rgbPixels = rgbImage.getPixelReader();
+        PixelWriter cmykPixel = cmykImage.getPixelWriter();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                Color color = rgbPixels.getColor(i, j);
+                double red = color.getRed(), blue = color.getBlue(), green = color.getGreen();
+                double alpha = color.getOpacity();
+                double cyan, magenta, yellow, key;
+                double cyanPixel, magentaPixel, yellowPixel, keyPixel;
+                double cyanVis, magentaVis, yellowVis, keyVis;
+                cyan = 1. - red / 255.;
+                magenta = 1. - green / 255.;
+                yellow = 1. - blue / 255.;
+                key = Math.min(cyan, Math.min(magenta, yellow));
+                if (key >= 1.) {
+                    cyanPixel = magentaPixel = yellowPixel = 0.;
+                } else {
+                    final double s = 1. - key;
+                    cyanPixel = (cyan - key) / s;
+                    magentaPixel = (magenta - key) / s;
+                    yellowPixel = (yellow - key) / s;
+
+                }
+                keyPixel = key;
+                cyanVis = 255 - Math.round(cyanPixel * 255);
+                magentaVis = 255 - Math.round(magentaPixel * 255);
+                yellowVis = 255 - Math.round(yellowPixel * 255);
+                keyVis = 255 - Math.round(keyPixel * 255);
+                cmykPixel.setColor(i, j, new Color(cyanPixel, magentaPixel, yellowPixel, keyPixel));
+            }
+        }
+        imageView.setImage(cmykImage);
     }
 }
