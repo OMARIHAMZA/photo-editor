@@ -13,6 +13,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -326,7 +328,7 @@ public class DrawingWindowController extends MasterController {
             for (int j = 0; j < height; j++) {
                 Color color = rgbPixels.getColor(i, j);
                 double r = color.getRed(), b = color.getBlue(), g = color.getGreen();
-                double  H, V, S;
+                double H, V, S;
 
                 double cmax = (r > g) ? r : g;
                 if (b > cmax) cmax = b;
@@ -402,7 +404,7 @@ public class DrawingWindowController extends MasterController {
     }
 
     @FXML
-    private void hsv2rgb(){
+    private void hsv2rgb() {
         Image hsvImage = imageView.getImage();
         int width = (int) hsvImage.getWidth();
         int height = (int) hsvImage.getHeight();
@@ -412,9 +414,9 @@ public class DrawingWindowController extends MasterController {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 Color color = hsvPixels.getColor(i, j);
-                double H=color.getHue(), S=color.getSaturation(), V=color.getBrightness();
+                double H = color.getHue(), S = color.getSaturation(), V = color.getBrightness();
                 double normalizedHue = ((H % 360) + 360) % 360;
-                H = normalizedHue/360;
+                H = normalizedHue / 360;
 
                 double r = 0, g = 0, b = 0;
                 if (S == 0) {
@@ -458,9 +460,32 @@ public class DrawingWindowController extends MasterController {
                             break;
                     }
                 }
-                rgbPixel.setColor(i,j,Color.color(r,g,b));
+                rgbPixel.setColor(i, j, Color.color(r, g, b));
             }
         }
         imageView.setImage(rgbImage);
+    }
+
+    public void shortCut(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.Z && keyEvent.isControlDown()) {
+            undoStep(null);
+        }
+        if (keyEvent.getCode() == KeyCode.O && keyEvent.isControlDown()) {
+            loadImage(null);
+        }
+        if (keyEvent.getCode() == KeyCode.S && keyEvent.isControlDown()) {
+            exportImage();
+        }
+        if (keyEvent.getCode() == KeyCode.P ) {
+            drawingType = DrawingOperation.DrawingType.BRUSH;
+            currentShape = DrawingOperation.Shape.LINE;
+        }
+        if (keyEvent.getCode() == KeyCode.E ) {
+            drawingType = DrawingOperation.DrawingType.ERASER;
+            currentShape = DrawingOperation.Shape.LINE;
+        }
+
+
+
     }
 }

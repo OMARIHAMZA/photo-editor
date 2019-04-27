@@ -25,15 +25,15 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#loadImage" text="Open" />
-                        <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Save" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadImage" text="Open     ctrl+o" />
+                        <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Save     ctrl+s" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="Close" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#undoStep" text="Undo" />
+                        <MenuItem mnemonicParsing="false" onAction="#undoStep" text="Undo     ctrl+z" />
                         <MenuItem mnemonicParsing="false" onAction="#clearAll" text="Clear" />
                     </items>
                 </Menu>
@@ -41,7 +41,7 @@
                     <items>
                   <Menu mnemonicParsing="false" text="Brush">
                     <items>
-                              <MenuItem fx:id="pencilTool" mnemonicParsing="false" text="Pencil" />
+                              <MenuItem fx:id="pencilTool" mnemonicParsing="false" text="Pencil       p" />
                         <MenuItem fx:id="rectBrush" mnemonicParsing="false" text="Rectangles" />
                         <MenuItem fx:id="ovalBrush" mnemonicParsing="false" text="Ovals" />
                         <MenuItem fx:id="roundedRectBrush" mnemonicParsing="false" text="Rounded Rectangles" />
@@ -55,7 +55,7 @@
                         <MenuItem fx:id="roundedRectangleShape" mnemonicParsing="false" text="Rounded Rectangle" />
                     </items>
                   </Menu>
-                  <MenuItem fx:id="eraser" mnemonicParsing="false" text="Eraser" />
+                  <MenuItem fx:id="eraser" mnemonicParsing="false" text="Eraser       e" />
                     </items>
                 </Menu>
             <Menu mnemonicParsing="false" text="Convert">
