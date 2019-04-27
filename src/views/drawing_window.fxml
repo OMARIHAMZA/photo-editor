@@ -62,6 +62,7 @@
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#argb2Cmyk" text="rgb 2 cmyk" />
                   <MenuItem mnemonicParsing="false" onAction="#rgb2hsv" text="rgb 2 hsv" />
+                  <MenuItem mnemonicParsing="false" onAction="#hsv2rgb" text="hsv 2 rgb" />
                </items>
             </Menu>
             </menus>

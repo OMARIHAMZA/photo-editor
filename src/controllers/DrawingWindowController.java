@@ -400,4 +400,67 @@ public class DrawingWindowController extends MasterController {
         }
         imageView.setImage(cmykImage);
     }
+
+    @FXML
+    private void hsv2rgb(){
+        Image hsvImage = imageView.getImage();
+        int width = (int) hsvImage.getWidth();
+        int height = (int) hsvImage.getHeight();
+        WritableImage rgbImage = new WritableImage(width, height);
+        PixelReader hsvPixels = hsvImage.getPixelReader();
+        PixelWriter rgbPixel = rgbImage.getPixelWriter();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                Color color = hsvPixels.getColor(i, j);
+                double H=color.getHue(), S=color.getSaturation(), V=color.getBrightness();
+                double normalizedHue = ((H % 360) + 360) % 360;
+                H = normalizedHue/360;
+
+                double r = 0, g = 0, b = 0;
+                if (S == 0) {
+                    r = g = b = V;
+                } else {
+                    double h = (H - Math.floor(H)) * 6.0;
+                    double f = h - java.lang.Math.floor(h);
+                    double p = V * (1.0 - S);
+                    double q = V * (1.0 - S * f);
+                    double t = V * (1.0 - (S * (1.0 - f)));
+                    switch ((int) h) {
+                        case 0:
+                            r = V;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = V;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = V;
+                            b = t;
+                            break;
+                        case 3:
+                            r = p;
+                            g = q;
+                            b = V;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = V;
+                            break;
+                        case 5:
+                            r = V;
+                            g = p;
+                            b = q;
+                            break;
+                    }
+                }
+                rgbPixel.setColor(i,j,Color.color(r,g,b));
+            }
+        }
+        imageView.setImage(rgbImage);
+    }
 }
