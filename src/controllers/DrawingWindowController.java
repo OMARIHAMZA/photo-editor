@@ -314,6 +314,54 @@ public class DrawingWindowController extends MasterController {
         return image.getWidth() + " " + image.getHeight();
     }
 
+    @FXML
+    private void rgb2hsv() {
+        Image rgbImage = imageView.getImage();
+        int width = (int) rgbImage.getWidth();
+        int height = (int) rgbImage.getHeight();
+        WritableImage hsvkImage = new WritableImage(width, height);
+        PixelReader rgbPixels = rgbImage.getPixelReader();
+        PixelWriter hsvkPixel = hsvkImage.getPixelWriter();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                Color color = rgbPixels.getColor(i, j);
+                double r = color.getRed(), b = color.getBlue(), g = color.getGreen();
+                double  H, V, S;
+
+                double cmax = (r > g) ? r : g;
+                if (b > cmax) cmax = b;
+                double cmin = (r < g) ? r : g;
+                if (b < cmin) cmin = b;
+
+                V = cmax;
+                if (cmax != 0)
+                    S = (double) (cmax - cmin) / cmax;
+                else
+                    S = 0;
+
+                if (S == 0) {
+                    H = 0;
+                } else {
+                    double redc = (cmax - r) / (cmax - cmin);
+                    double greenc = (cmax - g) / (cmax - cmin);
+                    double bluec = (cmax - b) / (cmax - cmin);
+                    if (r == cmax)
+                        H = bluec - greenc;
+                    else if (g == cmax)
+                        H = 2.0 + redc - bluec;
+                    else
+                        H = 4.0 + greenc - redc;
+                    H = H / 6.0;
+                    if (H < 0)
+                        H = H + 1.0;
+                }
+                hsvkPixel.setColor(i, j, Color.hsb(H, S, V));
+            }
+        }
+        imageView.setImage(hsvkImage);
+    }
+
+    @FXML
     private void argb2Cmyk() {
         Image rgbImage = imageView.getImage();
         int width = (int) rgbImage.getWidth();
@@ -347,7 +395,7 @@ public class DrawingWindowController extends MasterController {
                 magentaVis = 255 - Math.round(magentaPixel * 255);
                 yellowVis = 255 - Math.round(yellowPixel * 255);
                 keyVis = 255 - Math.round(keyPixel * 255);
-                cmykPixel.setColor(i, j, new Color(cyanVis, magentaVis, yellowVis, keyVis));
+                cmykPixel.setColor(i, j, Color.rgb((int) cyanVis, (int) magentaVis, (int) yellowVis, (int) keyVis));
             }
         }
         imageView.setImage(cmykImage);

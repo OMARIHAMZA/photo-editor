@@ -58,6 +58,12 @@
                   <MenuItem fx:id="eraser" mnemonicParsing="false" text="Eraser" />
                     </items>
                 </Menu>
+            <Menu mnemonicParsing="false" text="Convert">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#argb2Cmyk" text="rgb 2 cmyk" />
+                  <MenuItem mnemonicParsing="false" onAction="#rgb2hsv" text="rgb 2 hsv" />
+               </items>
+            </Menu>
             </menus>
         </MenuBar>
         <HBox>
