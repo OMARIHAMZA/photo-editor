@@ -7,7 +7,7 @@ public class DrawingOperation {
 
     public enum DrawingType {
 
-        LINE, DOT, ERASER
+        LINE, DOT, ERASER, TEXT
 
     }
 
@@ -17,8 +17,9 @@ public class DrawingOperation {
     private double endX, endY;
     private int width;
     private Paint stroke;
+    private String text;
 
-    public DrawingOperation(GraphicsContext context, DrawingType drawingType, double startX, double startY, double endX, double endY, Paint stroke, int width) {
+    public DrawingOperation(GraphicsContext context, DrawingType drawingType, double startX, double startY, double endX, double endY, Paint stroke, int width, String... params) {
         this.context = context;
         this.startX = startX;
         this.startY = startY;
@@ -27,6 +28,7 @@ public class DrawingOperation {
         this.endY = endY;
         this.width = width;
         this.stroke = stroke;
+        this.text = params.length == 0 ? "" : params[0];
     }
 
     public double getStartX() {
@@ -73,6 +75,14 @@ public class DrawingOperation {
     public void draw() {
         context.setStroke(stroke);
         context.setLineWidth(width);
-            context.strokeLine(startX, startY, endX, endY);
+        switch (drawingType){
+            case TEXT:{
+                context.strokeText(text, startX, startY);
+                break;
+            }
+            default:{
+                context.strokeLine(startX, startY, endX, endY);
+            }
+        }
     }
 }

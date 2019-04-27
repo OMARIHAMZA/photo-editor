@@ -2,6 +2,7 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
@@ -20,114 +21,111 @@
 
 <VBox fx:id="rootView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.DrawingWindowController">
     <children>
-      <MenuBar>
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#loadImage" text="Open" />
-                  <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Save" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#undoStep" text="Undo" />
-                  <MenuItem mnemonicParsing="false" onAction="#redoStep" text="Redo" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-      <HBox>
-         <children>
-            <VBox>
-               <children>
-                  <JFXButton fx:id="pencilTool" alignment="CENTER" prefWidth="100.0" style="-fx-border-color: #1e88e5;" text="Pencil Tool" textFill="#1e88e5">
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadImage" text="Open" />
+                        <MenuItem mnemonicParsing="false" onAction="#exportImage" text="Save" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="Close" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#undoStep" text="Undo" />
+                        <MenuItem mnemonicParsing="false" onAction="#redoStep" text="Redo" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Tools">
+                    <items>
+                        <MenuItem fx:id="pencilTool" mnemonicParsing="false" text="Pencil" />
+                  <MenuItem fx:id="linesTool" mnemonicParsing="false" text="Lines" />
+                  <MenuItem fx:id="eraser" mnemonicParsing="false" text="Eraser" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <HBox>
+            <children>
+                <VBox>
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Fill Color">
+                            <VBox.margin>
+                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                            </VBox.margin>
+                        </Text>
+                        <ColorPicker fx:id="colorPicker">
+                            <VBox.margin>
+                                <Insets bottom="8.0" left="8.0" right="8.0" />
+                            </VBox.margin>
+                        </ColorPicker>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pen Size">
+                            <VBox.margin>
+                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                            </VBox.margin>
+                        </Text>
+                        <JFXSlider fx:id="sizeSlider" blockIncrement="1.0" majorTickUnit="9.0" max="30.0" min="1.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0">
+                            <VBox.margin>
+                                <Insets bottom="8.0" left="8.0" right="8.0" />
+                            </VBox.margin>
+                        </JFXSlider>
+                  <JFXTextField fx:id="textInput" focusColor="#1e88e5">
                      <VBox.margin>
-                        <Insets left="4.0" right="2.0" top="8.0" />
+                        <Insets left="10.0" right="10.0" top="20.0" />
+                     </VBox.margin>
+                  </JFXTextField>
+                  <JFXButton fx:id="textTool" prefWidth="135.0" style="-fx-background-color: #1e88e5;" text="Switch to Text" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets left="10.0" top="10.0" />
                      </VBox.margin>
                   </JFXButton>
-                  <JFXButton fx:id="linesTool" alignment="CENTER" prefWidth="100.0" style="-fx-border-color: #1e88e5;" text="Line Tool" textFill="#1e88e5">
-                     <VBox.margin>
-                        <Insets left="4.0" top="8.0" />
-                     </VBox.margin>
-                  </JFXButton>
-                  <JFXButton fx:id="eraserTool" alignment="CENTER" prefWidth="100.0" style="-fx-border-color: #1e88e5;" text="Eraser" textFill="#1e88e5">
-                     <VBox.margin>
-                        <Insets left="4.0" top="8.0" />
-                     </VBox.margin>
-                  </JFXButton>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Fill Color">
-                     <VBox.margin>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                     </VBox.margin>
-                  </Text>
-                  <ColorPicker fx:id="colorPicker">
-                     <VBox.margin>
-                        <Insets bottom="8.0" left="8.0" right="8.0" />
-                     </VBox.margin>
-                  </ColorPicker>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pen Size">
-                     <VBox.margin>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                     </VBox.margin>
-                  </Text>
-                  <JFXSlider fx:id="sizeSlider" blockIncrement="1.0" majorTickUnit="9.0" max="30.0" min="1.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0">
-                     <VBox.margin>
-                        <Insets bottom="8.0" left="8.0" right="8.0" />
-                     </VBox.margin>
-                  </JFXSlider>
-               </children>
-            </VBox>
-            <Separator orientation="VERTICAL" prefHeight="200.0" style="-fx-background-color: #ffffff;" />
-            <VBox prefHeight="200.0" prefWidth="600.0">
-               <children>
-                  <StackPane fx:id="stackPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ffffff;">
-                     <children>
-                          <Canvas fx:id="drawingCanvas" height="400.0" width="600.0">
-                              <cursor>
-                                  <Cursor fx:constant="CROSSHAIR" />
-                              </cursor>
-                          </Canvas>
-                        <ImageView fx:id="imageView" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
-                        <VBox fx:id="getStartedLayout" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <JFXButton fx:id="chooseImageButton" onAction="#loadImage" ripplerFill="#1e88e5" style="-fx-border-color: #1e88e5;" text="Choose Image" textFill="#1e88e5">
-                                 <font>
-                                    <Font name="Aljazeera" size="16.0" />
-                                 </font>
-                              </JFXButton>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                                 <children>
-                                    <Separator prefWidth="200.0" />
-                                    <Text fill="#1e88e5" strokeType="OUTSIDE" strokeWidth="0.0" text="Or">
-                                       <font>
-                                          <Font size="16.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets left="16.0" right="16.0" />
-                                       </HBox.margin>
-                                    </Text>
-                                    <Separator prefWidth="200.0" />
-                                 </children>
-                              </HBox>
-                              <JFXButton fx:id="freeDrawingButton" ripplerFill="#1e88e5" style="-fx-border-color: #1e88e5;" text="Free Drawing" textFill="#1e88e5">
-                                 <font>
-                                    <Font name="Aljazeera" size="16.0" />
-                                 </font>
-                              </JFXButton>
-                           </children>
-                        </VBox>
-                     </children>
-                  </StackPane>
-               </children>
-            </VBox>
-         </children>
-      </HBox>
+                    </children>
+                </VBox>
+                <Separator orientation="VERTICAL" prefHeight="200.0" style="-fx-background-color: #ffffff;" />
+                <VBox prefHeight="200.0" prefWidth="600.0">
+                    <children>
+                        <StackPane fx:id="stackPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ffffff;">
+                            <children>
+                                <Canvas fx:id="drawingCanvas" height="400.0" width="600.0">
+                                    <cursor>
+                                        <Cursor fx:constant="CROSSHAIR" />
+                                    </cursor>
+                                </Canvas>
+                                <ImageView fx:id="imageView" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
+                                <VBox fx:id="getStartedLayout" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                                    <children>
+                                        <JFXButton fx:id="chooseImageButton" onAction="#loadImage" ripplerFill="#1e88e5" style="-fx-border-color: #1e88e5;" text="Choose Image" textFill="#1e88e5">
+                                            <font>
+                                                <Font name="Aljazeera" size="16.0" />
+                                            </font>
+                                        </JFXButton>
+                                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                            <children>
+                                                <Separator prefWidth="200.0" />
+                                                <Text fill="#1e88e5" strokeType="OUTSIDE" strokeWidth="0.0" text="Or">
+                                                    <font>
+                                                        <Font size="16.0" />
+                                                    </font>
+                                                    <HBox.margin>
+                                                        <Insets left="16.0" right="16.0" />
+                                                    </HBox.margin>
+                                                </Text>
+                                                <Separator prefWidth="200.0" />
+                                            </children>
+                                        </HBox>
+                                        <JFXButton fx:id="freeDrawingButton" ripplerFill="#1e88e5" style="-fx-border-color: #1e88e5;" text="Free Drawing" textFill="#1e88e5">
+                                            <font>
+                                                <Font name="Aljazeera" size="16.0" />
+                                            </font>
+                                        </JFXButton>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
     </children>
 </VBox>

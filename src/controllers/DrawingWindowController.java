@@ -2,6 +2,7 @@ package controllers;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -10,6 +11,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -21,12 +23,10 @@ import javafx.stage.FileChooser;
 import models.DrawingOperation;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.IntBuffer;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,13 +63,21 @@ public class DrawingWindowController extends MasterController {
     private JFXButton freeDrawingButton;
 
     @FXML
-    private JFXButton pencilTool;
+    private MenuItem pencilTool;
 
     @FXML
-    private JFXButton linesTool;
+    private MenuItem linesTool;
 
     @FXML
-    private JFXButton eraserTool;
+    private MenuItem eraser;
+
+
+    @FXML
+    private JFXTextField textInput;
+
+    @FXML
+    private JFXButton textTool;
+
 
     //Drawing Items
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
@@ -94,13 +102,18 @@ public class DrawingWindowController extends MasterController {
 
         freeDrawingButton.setOnMouseClicked(v -> getStartedLayout.setVisible(false));
 
-        linesTool.setOnMouseClicked(v -> drawingType = DrawingOperation.DrawingType.LINE);
-        pencilTool.setOnMouseClicked(v -> drawingType = DrawingOperation.DrawingType.DOT);
-        eraserTool.setOnMouseClicked(v -> drawingType = DrawingOperation.DrawingType.ERASER);
+        linesTool.setOnAction(v -> drawingType = DrawingOperation.DrawingType.LINE);
+        pencilTool.setOnAction(v -> drawingType = DrawingOperation.DrawingType.DOT);
+        eraser.setOnAction(v -> drawingType = DrawingOperation.DrawingType.ERASER);
+        textTool.setOnAction(v -> drawingType = DrawingOperation.DrawingType.TEXT);
     }
 
     private void mousePressed(MouseEvent mouseEvent) {
-        if (drawingType == DrawingOperation.DrawingType.LINE) {
+        if (drawingType == DrawingOperation.DrawingType.TEXT) {
+            this.startX = mouseEvent.getX();
+            this.startY = mouseEvent.getY();
+            drawText();
+        } else if (drawingType == DrawingOperation.DrawingType.LINE) {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
         } else {
@@ -117,24 +130,39 @@ public class DrawingWindowController extends MasterController {
         if (drawingType == DrawingOperation.DrawingType.LINE) {
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
+            historySet.add(currentFigure);
+            drawFigure();
         } else if (drawingType == DrawingOperation.DrawingType.DOT || drawingType == DrawingOperation.DrawingType.ERASER) {
             this.startX = endX;
             this.startY = endY;
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
             currentFigure += 1;
+            historySet.add(currentFigure);
+            drawFigure();
         }
-        historySet.add(currentFigure);
-        drawLine();
     }
 
-    private void drawLine() {
+    private void drawFigure() {
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
                 drawingType,
                 startX, startY, endX, endY,
                 Paint.valueOf(colorPicker.getValue().toString()),
                 (int) sizeSlider.getValue()));
+        for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
+            entry.getValue().draw();
+        }
+    }
+
+    private void drawText(){
+        graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+        drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
+                drawingType,
+                startX, startY, startX, startY,
+                Paint.valueOf(colorPicker.getValue().toString()),
+                (int) sizeSlider.getValue(),
+                textInput.getText()));
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();
         }
