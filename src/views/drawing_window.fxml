@@ -39,8 +39,22 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Tools">
                     <items>
-                        <MenuItem fx:id="pencilTool" mnemonicParsing="false" text="Pencil" />
-                  <MenuItem fx:id="linesTool" mnemonicParsing="false" text="Lines" />
+                  <Menu mnemonicParsing="false" text="Brush">
+                    <items>
+                              <MenuItem fx:id="pencilTool" mnemonicParsing="false" text="Pencil" />
+                        <MenuItem fx:id="rectBrush" mnemonicParsing="false" text="Rectangles" />
+                        <MenuItem fx:id="ovalBrush" mnemonicParsing="false" text="Ovals" />
+                        <MenuItem fx:id="roundedRectBrush" mnemonicParsing="false" text="Rounded Rectangles" />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Shape">
+                    <items>
+                      <MenuItem fx:id="linesTool" mnemonicParsing="false" text="Line" />
+                        <MenuItem fx:id="rectShape" mnemonicParsing="false" text="Rectangle" />
+                        <MenuItem fx:id="ovalShape" mnemonicParsing="false" text="Oval" />
+                        <MenuItem fx:id="roundedRectangleShape" mnemonicParsing="false" text="Rounded Rectangle" />
+                    </items>
+                  </Menu>
                   <MenuItem fx:id="eraser" mnemonicParsing="false" text="Eraser" />
                     </items>
                 </Menu>

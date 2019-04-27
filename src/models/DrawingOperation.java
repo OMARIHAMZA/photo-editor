@@ -7,12 +7,12 @@ public class DrawingOperation {
 
     public enum DrawingType {
 
-        LINE, DOT, ERASER, TEXT
+        SHAPE, BRUSH, ERASER, TEXT
 
     }
 
-    public enum Shape{
-        RECTANGLE, OVAL, LINE
+    public enum Shape {
+        RECTANGLE, OVAL, ROUNDED_RECTANGLE, LINE
     }
 
     private GraphicsContext context;
@@ -22,8 +22,9 @@ public class DrawingOperation {
     private int width;
     private Paint stroke;
     private String text;
+    private Shape shape;
 
-    public DrawingOperation(GraphicsContext context, DrawingType drawingType, double startX, double startY, double endX, double endY, Paint stroke, int width, String... params) {
+    public DrawingOperation(GraphicsContext context, DrawingType drawingType, double startX, double startY, double endX, double endY, Paint stroke, int width, Shape shape, String... params) {
         this.context = context;
         this.startX = startX;
         this.startY = startY;
@@ -32,60 +33,33 @@ public class DrawingOperation {
         this.endY = endY;
         this.width = width;
         this.stroke = stroke;
+        this.shape = shape;
         this.text = params.length == 0 ? "" : params[0];
     }
-
-    public double getStartX() {
-        return startX;
-    }
-
-    public void setStartX(double startX) {
-        this.startX = startX;
-    }
-
-    public double getStartY() {
-        return startY;
-    }
-
-    public void setStartY(double startY) {
-        this.startY = startY;
-    }
-
-    public double getEndX() {
-        return endX;
-    }
-
-    public void setEndX(double endX) {
-        this.endX = endX;
-    }
-
-    public double getEndY() {
-        return endY;
-    }
-
-    public void setEndY(double endY) {
-        this.endY = endY;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
 
     public void draw() {
         context.setStroke(stroke);
         context.setLineWidth(width);
-        switch (drawingType){
-            case TEXT:{
-                context.strokeText(text, startX, startY);
-                break;
-            }
-            default:{
-                context.strokeRoundRect(startX, startY, endX, endY, 10, 10);
+        if (drawingType == DrawingType.TEXT) {
+            context.strokeText(text, startX, startY);
+        } else {
+            switch (shape) {
+                case LINE:
+                    context.strokeLine(startX, startY, endX, endY);
+                    break;
+
+                case OVAL:
+                    context.strokeOval(startX, startY, endX, endY);
+                    break;
+
+                case RECTANGLE:
+                    context.strokeRect(startX, startY, endX, endY);
+                    break;
+
+                case ROUNDED_RECTANGLE:
+                    context.strokeRoundRect(startX, startY, endX, endY, 10, 10);
+                    break;
+
             }
         }
     }

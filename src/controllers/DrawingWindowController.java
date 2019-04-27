@@ -63,13 +63,31 @@ public class DrawingWindowController extends MasterController {
     private JFXButton freeDrawingButton;
 
     @FXML
-    private MenuItem pencilTool;
-
-    @FXML
     private MenuItem linesTool;
 
     @FXML
     private MenuItem eraser;
+
+    @FXML
+    private MenuItem pencilTool;
+
+    @FXML
+    private MenuItem rectBrush;
+
+    @FXML
+    private MenuItem ovalBrush;
+
+    @FXML
+    private MenuItem roundedRectBrush;
+
+    @FXML
+    private MenuItem rectShape;
+
+    @FXML
+    private MenuItem ovalShape;
+
+    @FXML
+    private MenuItem roundedRectangleShape;
 
 
     @FXML
@@ -83,10 +101,11 @@ public class DrawingWindowController extends MasterController {
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
     private GraphicsContext graphicsContext;
     private int currentFigure = 0;
+    private DrawingOperation.Shape currentShape;
     private double startX = 0, startY = 0, endX = 0, endY = 0;
     private Set<Integer> historySet = new LinkedHashSet<>();
     private LinkedHashMap<Integer, DrawingOperation> deletedOperations = new LinkedHashMap<>();
-    private DrawingOperation.DrawingType drawingType = DrawingOperation.DrawingType.LINE;
+    private DrawingOperation.DrawingType drawingType = DrawingOperation.DrawingType.SHAPE;
 
 
     @Override
@@ -102,21 +121,60 @@ public class DrawingWindowController extends MasterController {
 
         freeDrawingButton.setOnMouseClicked(v -> getStartedLayout.setVisible(false));
 
-        linesTool.setOnAction(v -> drawingType = DrawingOperation.DrawingType.LINE);
-        pencilTool.setOnAction(v -> drawingType = DrawingOperation.DrawingType.DOT);
-        eraser.setOnAction(v -> drawingType = DrawingOperation.DrawingType.ERASER);
+        pencilTool.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.BRUSH;
+            currentShape = DrawingOperation.Shape.LINE;
+        });
+        eraser.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.ERASER;
+            currentShape = DrawingOperation.Shape.LINE;
+        });
         textTool.setOnAction(v -> drawingType = DrawingOperation.DrawingType.TEXT);
+
+        configureShapes();
+    }
+
+    private void configureShapes() {
+        currentShape = DrawingOperation.Shape.LINE;
+        linesTool.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.SHAPE;
+            currentShape = DrawingOperation.Shape.LINE;
+        });
+        rectBrush.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.BRUSH;
+            currentShape = DrawingOperation.Shape.RECTANGLE;
+        });
+        rectShape.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.SHAPE;
+            currentShape = DrawingOperation.Shape.RECTANGLE;
+        });
+        ovalBrush.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.BRUSH;
+            currentShape = DrawingOperation.Shape.OVAL;
+        });
+        ovalShape.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.SHAPE;
+            currentShape = DrawingOperation.Shape.OVAL;
+        });
+        roundedRectangleShape.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.SHAPE;
+            currentShape = DrawingOperation.Shape.ROUNDED_RECTANGLE;
+        });
+        roundedRectBrush.setOnAction(v -> {
+            drawingType = DrawingOperation.DrawingType.BRUSH;
+            currentShape = DrawingOperation.Shape.ROUNDED_RECTANGLE;
+        });
     }
 
     private void mousePressed(MouseEvent mouseEvent) {
-        if (drawingType == DrawingOperation.DrawingType.LINE) {
+        if (drawingType == DrawingOperation.DrawingType.SHAPE) {
             currentFigure += 1;
         }
         if (drawingType == DrawingOperation.DrawingType.TEXT) {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
             drawText();
-        } else if (drawingType == DrawingOperation.DrawingType.LINE) {
+        } else if (drawingType == DrawingOperation.DrawingType.SHAPE) {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
         } else {
@@ -130,12 +188,12 @@ public class DrawingWindowController extends MasterController {
     }
 
     private void mouseDragged(MouseEvent mouseEvent) {
-        if (drawingType == DrawingOperation.DrawingType.LINE) {
+        if (drawingType == DrawingOperation.DrawingType.SHAPE) {
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
             historySet.add(currentFigure);
             drawFigure();
-        } else if (drawingType == DrawingOperation.DrawingType.DOT || drawingType == DrawingOperation.DrawingType.ERASER) {
+        } else if (drawingType == DrawingOperation.DrawingType.BRUSH || drawingType == DrawingOperation.DrawingType.ERASER) {
             this.startX = endX;
             this.startY = endY;
             this.endX = mouseEvent.getX();
@@ -152,13 +210,14 @@ public class DrawingWindowController extends MasterController {
                 drawingType,
                 startX, startY, endX, endY,
                 Paint.valueOf(colorPicker.getValue().toString()),
-                (int) sizeSlider.getValue()));
+                (int) sizeSlider.getValue(),
+                currentShape));
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();
         }
     }
 
-    private void drawText(){
+    private void drawText() {
         currentFigure += 1;
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
@@ -166,6 +225,7 @@ public class DrawingWindowController extends MasterController {
                 startX, startY, startX, startY,
                 Paint.valueOf(colorPicker.getValue().toString()),
                 (int) sizeSlider.getValue(),
+                currentShape,
                 textInput.getText()));
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();
