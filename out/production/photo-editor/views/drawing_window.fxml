@@ -34,7 +34,7 @@
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#undoStep" text="Undo" />
-                        <MenuItem mnemonicParsing="false" onAction="#redoStep" text="Redo" />
+                        <MenuItem mnemonicParsing="false" onAction="#clearAll" text="Clear" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Tools">

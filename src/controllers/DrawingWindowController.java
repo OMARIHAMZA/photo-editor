@@ -82,10 +82,10 @@ public class DrawingWindowController extends MasterController {
     //Drawing Items
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
     private GraphicsContext graphicsContext;
-    private int currentFigure = 1;
+    private int currentFigure = 0;
     private double startX = 0, startY = 0, endX = 0, endY = 0;
     private Set<Integer> historySet = new LinkedHashSet<>();
-    private HashMap<Integer, DrawingOperation> deletedOperations = new HashMap<>();
+    private LinkedHashMap<Integer, DrawingOperation> deletedOperations = new LinkedHashMap<>();
     private DrawingOperation.DrawingType drawingType = DrawingOperation.DrawingType.LINE;
 
 
@@ -109,6 +109,9 @@ public class DrawingWindowController extends MasterController {
     }
 
     private void mousePressed(MouseEvent mouseEvent) {
+        if (drawingType == DrawingOperation.DrawingType.LINE) {
+            currentFigure += 1;
+        }
         if (drawingType == DrawingOperation.DrawingType.TEXT) {
             this.startX = mouseEvent.getX();
             this.startY = mouseEvent.getY();
@@ -123,7 +126,7 @@ public class DrawingWindowController extends MasterController {
     }
 
     private void mouseReleased(MouseEvent mouseEvent) {
-        currentFigure += 1;
+
     }
 
     private void mouseDragged(MouseEvent mouseEvent) {
@@ -137,8 +140,8 @@ public class DrawingWindowController extends MasterController {
             this.startY = endY;
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
-            currentFigure += 1;
             historySet.add(currentFigure);
+            currentFigure += 1;
             drawFigure();
         }
     }
@@ -156,6 +159,7 @@ public class DrawingWindowController extends MasterController {
     }
 
     private void drawText(){
+        currentFigure += 1;
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
                 drawingType,
@@ -218,15 +222,6 @@ public class DrawingWindowController extends MasterController {
         if (file != null) {
             imageView.setImage(new Image(file.toURI().toString()));
             getStartedLayout.setVisible(false);
-
-            /*int pixels[] = new int[(int) (imageView.getImage().getWidth() * imageView.getImage().getHeight())];
-
-            imageView.getImage().getPixelReader().getPixels(0,0,
-                    (int) imageView.getImage().getWidth(),
-                    (int) imageView.getImage().getHeight(),
-                    imageView.getImage().getPixelReader().getPixelFormat(),
-                    pixels,
-                    1);*/
         } else {
             showMessage("Select a valid image", true);
         }
@@ -234,8 +229,9 @@ public class DrawingWindowController extends MasterController {
     }
 
     @FXML
-    void redoStep(ActionEvent event) {
-
+    void clearAll() {
+        graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+        drawingOperations.clear();
     }
 
     @FXML
@@ -244,12 +240,9 @@ public class DrawingWindowController extends MasterController {
         if (drawingOperations.size() == 1) {
             // TODO: 4/17/2019 DISABLE THE UNDO BUUTTON
         }
+        drawingOperations.remove(currentFigure);
         currentFigure -= 1;
-        int figureToDelete = drawingOperations.size();
-        System.err.println("DD" + figureToDelete);
-        DrawingOperation drawingOperation = drawingOperations.remove(figureToDelete);
         System.err.println(drawingOperations);
-        deletedOperations.put(figureToDelete, drawingOperation);
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();

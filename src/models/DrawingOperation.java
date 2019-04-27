@@ -11,6 +11,10 @@ public class DrawingOperation {
 
     }
 
+    public enum Shape{
+        RECTANGLE, OVAL, LINE
+    }
+
     private GraphicsContext context;
     private DrawingType drawingType;
     private double startX, startY;
@@ -81,7 +85,7 @@ public class DrawingOperation {
                 break;
             }
             default:{
-                context.strokeLine(startX, startY, endX, endY);
+                context.strokeRoundRect(startX, startY, endX, endY, 10, 10);
             }
         }
     }
