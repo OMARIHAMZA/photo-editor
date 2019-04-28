@@ -1,5 +1,4 @@
 # Compiled class file
-*.class
 
 # Log file
 *.log
@@ -25,8 +24,3 @@ hs_err_pid*
 /.gitignore
 /out/
 /libs/
-.idea/libraries/bin.xml
-.idea/libraries/bin.xml
-.idea/libraries/lib.xml
-.idea/misc.xml
-.idea/workspace.xml
