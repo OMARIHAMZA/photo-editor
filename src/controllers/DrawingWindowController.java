@@ -334,17 +334,16 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     private void argb2Cmyk() {
-        Image rgbImage = imageView.getImage();
-        int width = (int) rgbImage.getWidth();
-        int height = (int) rgbImage.getHeight();
-        WritableImage cmykImage = new WritableImage(width, height);
-        PixelReader rgbPixels = rgbImage.getPixelReader();
-        PixelWriter cmykPixel = cmykImage.getPixelWriter();
+        final Image rgbImage = imageView.getImage();
+        final int width = (int) rgbImage.getWidth();
+        final int height = (int) rgbImage.getHeight();
+        final WritableImage cmykImage = new WritableImage(width, height);
+        final PixelReader rgbPixels = rgbImage.getPixelReader();
+        final PixelWriter cmykPixel = cmykImage.getPixelWriter();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                Color color = rgbPixels.getColor(i, j);
-                double red = color.getRed(), blue = color.getBlue(), green = color.getGreen();
-                double alpha = color.getOpacity();
+                final Color color = rgbPixels.getColor(i, j);
+                final double red = color.getRed(), blue = color.getBlue(), green = color.getGreen();
                 double cyan, magenta, yellow, key;
                 double cyanPixel, magentaPixel, yellowPixel, keyPixel;
                 double cyanVis, magentaVis, yellowVis, keyVis;
