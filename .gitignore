@@ -24,3 +24,5 @@ hs_err_pid*
 /.gitignore
 /out/
 /libs/
+.idea/misc.xml
+.idea/workspace.xml
