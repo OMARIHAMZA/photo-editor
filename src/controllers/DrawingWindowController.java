@@ -11,7 +11,10 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -30,10 +33,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static javafx.scene.input.MouseEvent.*;
+import static javax.swing.text.html.parser.DTDConstants.MODEL;
 
 public class DrawingWindowController extends MasterController {
 
@@ -98,6 +103,16 @@ public class DrawingWindowController extends MasterController {
     @FXML
     private JFXButton textTool;
 
+    @FXML
+    private MenuItem blurTool;
+
+    @FXML
+    private Menu brushSubMenu;
+
+
+    @FXML
+    private Menu shapeSubMenu;
+
 
     //Drawing Items
     private HashMap<Integer, DrawingOperation> drawingOperations = new HashMap<>();
@@ -105,8 +120,6 @@ public class DrawingWindowController extends MasterController {
     private int currentFigure = 0;
     private DrawingOperation.Shape currentShape;
     private double startX = 0, startY = 0, endX = 0, endY = 0;
-    private Set<Integer> historySet = new LinkedHashSet<>();
-    private LinkedHashMap<Integer, DrawingOperation> deletedOperations = new LinkedHashMap<>();
     private DrawingOperation.DrawingType drawingType = DrawingOperation.DrawingType.SHAPE;
 
 
@@ -121,7 +134,12 @@ public class DrawingWindowController extends MasterController {
         drawingCanvas.addEventFilter(MOUSE_DRAGGED, this::mouseDragged);
         getStartedLayout.toFront();
 
-        freeDrawingButton.setOnMouseClicked(v -> getStartedLayout.setVisible(false));
+        freeDrawingButton.setOnMouseClicked(v -> {
+            brushSubMenu.setDisable(false);
+            shapeSubMenu.setDisable(false);
+            eraser.setDisable(false);
+            getStartedLayout.setVisible(false);
+        });
 
         pencilTool.setOnAction(v -> {
             drawingType = DrawingOperation.DrawingType.BRUSH;
@@ -130,6 +148,23 @@ public class DrawingWindowController extends MasterController {
         eraser.setOnAction(v -> {
             drawingType = DrawingOperation.DrawingType.ERASER;
             currentShape = DrawingOperation.Shape.LINE;
+        });
+
+        blurTool.setOnAction(v -> {
+            TextInputDialog inputDialog = new TextInputDialog();
+            inputDialog.setTitle("Gaussian Blur");
+            inputDialog.setContentText("Enter a value");
+            inputDialog.setHeaderText("Gaussian Blur Radius");
+            final Optional<String> result = inputDialog.showAndWait();
+            result.ifPresent(s -> {
+                try {
+                    int radius = Integer.valueOf(s);
+                    GaussianBlur blur = new GaussianBlur(radius);
+                    imageView.setEffect(blur);
+                } catch (NumberFormatException e) {
+                    showMessage("Enter a valid integer value", true);
+                }
+            });
         });
         textTool.setOnAction(v -> drawingType = DrawingOperation.DrawingType.TEXT);
 
@@ -193,14 +228,12 @@ public class DrawingWindowController extends MasterController {
         if (drawingType == DrawingOperation.DrawingType.SHAPE) {
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
-            historySet.add(currentFigure);
             drawFigure(true);
         } else if (drawingType == DrawingOperation.DrawingType.BRUSH || drawingType == DrawingOperation.DrawingType.ERASER) {
             this.startX = endX;
             this.startY = endY;
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
-            historySet.add(currentFigure);
             currentFigure += 1;
             drawFigure(false);
         }
@@ -214,10 +247,8 @@ public class DrawingWindowController extends MasterController {
                 Paint.valueOf(colorPicker.getValue().toString()),
                 (int) sizeSlider.getValue(),
                 currentShape));
-        if (!isShape) {
-            for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
-                entry.getValue().draw();
-            }
+        for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
+            entry.getValue().draw();
         }
     }
 
@@ -253,6 +284,10 @@ public class DrawingWindowController extends MasterController {
         if (file != null) {
             imageView.setImage(new Image(file.toURI().toString()));
             getStartedLayout.setVisible(false);
+            brushSubMenu.setDisable(false);
+            shapeSubMenu.setDisable(false);
+            eraser.setDisable(false);
+            blurTool.setDisable(false);
         } else {
             showMessage("Select a valid image", true);
         }
@@ -287,6 +322,7 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     private void rgb2hsv() {
+        if (!checkImageView()) return;
         Image rgbImage = imageView.getImage();
         int width = (int) rgbImage.getWidth();
         int height = (int) rgbImage.getHeight();
@@ -334,6 +370,7 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     private void argb2Cmyk() {
+        if (!checkImageView()) return;
         final Image rgbImage = imageView.getImage();
         final int width = (int) rgbImage.getWidth();
         final int height = (int) rgbImage.getHeight();
@@ -373,6 +410,7 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     private void hsv2rgb() {
+        if (!checkImageView()) return;
         Image hsvImage = imageView.getImage();
         int width = (int) hsvImage.getWidth();
         int height = (int) hsvImage.getHeight();
@@ -454,5 +492,14 @@ public class DrawingWindowController extends MasterController {
         }
 
 
+    }
+
+    private boolean checkImageView(){
+        if (imageView.getImage() == null){
+            showMessage("Select an image first!", true);
+            return false;
+        }else{
+            return true;
+        }
     }
 }

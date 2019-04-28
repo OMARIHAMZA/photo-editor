@@ -19,9 +19,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="rootView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      onKeyPressed="#shortCut" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.DrawingWindowController">
+<VBox fx:id="rootView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#shortCut" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.DrawingWindowController">
     <children>
         <MenuBar>
             <menus>
@@ -41,7 +39,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Tools">
                     <items>
-                  <Menu mnemonicParsing="false" text="Brush">
+                  <Menu fx:id="brushSubMenu" disable="true" mnemonicParsing="false" text="Brush">
                     <items>
                               <MenuItem fx:id="pencilTool" mnemonicParsing="false" text="Pencil       p" />
                         <MenuItem fx:id="rectBrush" mnemonicParsing="false" text="Rectangles" />
@@ -49,7 +47,7 @@
                         <MenuItem fx:id="roundedRectBrush" mnemonicParsing="false" text="Rounded Rectangles" />
                     </items>
                   </Menu>
-                  <Menu mnemonicParsing="false" text="Shape">
+                  <Menu fx:id="shapeSubMenu" disable="true" mnemonicParsing="false" text="Shape">
                     <items>
                       <MenuItem fx:id="linesTool" mnemonicParsing="false" text="Line" />
                         <MenuItem fx:id="rectShape" mnemonicParsing="false" text="Rectangle" />
@@ -57,7 +55,8 @@
                         <MenuItem fx:id="roundedRectangleShape" mnemonicParsing="false" text="Rounded Rectangle" />
                     </items>
                   </Menu>
-                  <MenuItem fx:id="eraser" mnemonicParsing="false" text="Eraser       e" />
+                  <MenuItem fx:id="eraser" disable="true" mnemonicParsing="false" text="Eraser       e" />
+                  <MenuItem fx:id="blurTool" disable="true" mnemonicParsing="false" text="Blur" />
                   <MenuItem mnemonicParsing="false" onAction="#launchMergeWindow" text="Merge Tool" />
                     </items>
                 </Menu>

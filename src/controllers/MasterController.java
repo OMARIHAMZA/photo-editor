@@ -21,9 +21,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
+import javax.lang.model.element.Element;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +50,7 @@ abstract class MasterController implements Initializable {
         this.rootView = rootView;
     }
 
-    void showWindow(String path, String title){
+    void showWindow(String path, String title) {
         Parent root;
         Stage stage;
         try {
@@ -73,8 +75,8 @@ abstract class MasterController implements Initializable {
         return fileChooser.showOpenDialog(rootView.getScene().getWindow());
     }
 
-    void hideViews(Node... nodes){
-        for (Node node: nodes){
+    void hideViews(Node... nodes) {
+        for (Node node : nodes) {
             node.setVisible(false);
         }
     }
@@ -86,7 +88,7 @@ abstract class MasterController implements Initializable {
         return pane.snapshot(spa, writableImage);
     }
 
-    void exportImage(Pane pane){
+    void exportImage(Pane pane) {
         FileChooser fileChooser = new FileChooser();
 
         FileChooser.ExtensionFilter extFilter =
@@ -106,6 +108,5 @@ abstract class MasterController implements Initializable {
             }
         }
     }
-
 
 }
