@@ -56,6 +56,7 @@
                     </items>
                   </Menu>
                   <MenuItem fx:id="eraser" mnemonicParsing="false" text="Eraser       e" />
+                  <MenuItem mnemonicParsing="false" onAction="#launchMergeWindow" text="Merge Tool" />
                     </items>
                 </Menu>
             <Menu mnemonicParsing="false" text="Convert">

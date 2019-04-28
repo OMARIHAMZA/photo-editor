@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox fx:id="rootView" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MergePhotosController">
+   <children>
+      <StackPane fx:id="stackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
+         <children>
+            <ImageView fx:id="firstImageView" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="secondImageView" fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <JFXButton fx:id="selectFirstImageButton" prefWidth="250.0" style="-fx-border-color: #1E88E5;" text="Select first image" textFill="#1e88e5">
+                     <font>
+                        <Font name="Segoe UI" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="4.0" left="40.0" right="40.0" top="4.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </JFXButton>
+                  <JFXButton fx:id="selectImageButton" prefWidth="250.0" style="-fx-border-color: #1E88E5;" text="Select second image" textFill="#1e88e5">
+                     <font>
+                        <Font name="Segoe UI" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="4.0" left="40.0" right="40.0" top="4.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </JFXButton>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+      <HBox fx:id="toolsBox" alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="50.0">
+         <children>
+            <VBox>
+               <children>
+                  <Text fill="#1e88e5" strokeType="OUTSIDE" strokeWidth="0.0" text="First Image Opacity">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <JFXSlider fx:id="firstImageOpacitySlider" blockIncrement="1.0" showTickLabels="true" showTickMarks="true" value="100.0" />
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </VBox>
+            <VBox>
+               <children>
+                  <Text fill="#1e88e5" strokeType="OUTSIDE" strokeWidth="0.0" text="Second Image Opacity">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <JFXSlider fx:id="secondImageOpacitySlider" blockIncrement="1.0" showTickLabels="true" showTickMarks="true" value="100.0" />
+               </children>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </VBox>
+            <HBox alignment="BOTTOM_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="300.0">
+               <children>
+                  <JFXButton fx:id="saveButton" onAction="#saveImage" prefWidth="100.0" style="-fx-background-color: #1E88E5;" text="SAVE" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children></HBox>
+   </children>
+</VBox>

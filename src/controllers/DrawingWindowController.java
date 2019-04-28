@@ -194,7 +194,7 @@ public class DrawingWindowController extends MasterController {
             this.endX = mouseEvent.getX();
             this.endY = mouseEvent.getY();
             historySet.add(currentFigure);
-            drawFigure();
+            drawFigure(true);
         } else if (drawingType == DrawingOperation.DrawingType.BRUSH || drawingType == DrawingOperation.DrawingType.ERASER) {
             this.startX = endX;
             this.startY = endY;
@@ -202,11 +202,11 @@ public class DrawingWindowController extends MasterController {
             this.endY = mouseEvent.getY();
             historySet.add(currentFigure);
             currentFigure += 1;
-            drawFigure();
+            drawFigure(false);
         }
     }
 
-    private void drawFigure() {
+    private void drawFigure(boolean isShape) {
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         drawingOperations.put(currentFigure, new DrawingOperation(graphicsContext,
                 drawingType,
@@ -214,8 +214,10 @@ public class DrawingWindowController extends MasterController {
                 Paint.valueOf(colorPicker.getValue().toString()),
                 (int) sizeSlider.getValue(),
                 currentShape));
-        for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
-            entry.getValue().draw();
+        if (!isShape) {
+            for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
+                entry.getValue().draw();
+            }
         }
     }
 
@@ -242,52 +244,18 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     void exportImage() {
-        FileChooser fileChooser = new FileChooser();
-
-        FileChooser.ExtensionFilter extFilter =
-                new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        File file = fileChooser.showSaveDialog(rootView.getScene().getWindow());
-
-        if (file != null) {
-            try {
-                WritableImage writableImage = pixelScaleSnapshot(stackPane, 2);
-                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
-                ImageIO.write(renderedImage, "png", file);
-                showMessage("Image Saved", false);
-            } catch (IOException ex) {
-                Logger.getLogger(DrawingWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        super.exportImage(stackPane);
     }
-
-    private WritableImage pixelScaleSnapshot(StackPane pane, double pixelScale) {
-        WritableImage writableImage = new WritableImage((int) Math.rint(pixelScale * pane.getWidth()), (int) Math.rint(pixelScale * pane.getHeight()));
-        SnapshotParameters spa = new SnapshotParameters();
-        spa.setTransform(Transform.scale(pixelScale, pixelScale));
-        return pane.snapshot(spa, writableImage);
-    }
-
 
     @FXML
     void loadImage(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-
-        FileChooser.ExtensionFilter extensionFilter =
-                new FileChooser.ExtensionFilter("Images", "*.png", "*jpg", "*jpeg");
-
-        fileChooser.getExtensionFilters().add(extensionFilter);
-
-        File file = fileChooser.showOpenDialog(rootView.getScene().getWindow());
-
+        File file = chooseFile();
         if (file != null) {
             imageView.setImage(new Image(file.toURI().toString()));
             getStartedLayout.setVisible(false);
         } else {
             showMessage("Select a valid image", true);
         }
-
     }
 
     @FXML
@@ -311,9 +279,10 @@ public class DrawingWindowController extends MasterController {
         }
     }
 
-    private String getImageSize(final File file) {
-        Image image = new Image(file.toURI().toString());
-        return image.getWidth() + " " + image.getHeight();
+
+    @FXML
+    void launchMergeWindow(ActionEvent event) {
+        showWindow("/views/merge_window.fxml", "Merge");
     }
 
     @FXML
@@ -476,15 +445,14 @@ public class DrawingWindowController extends MasterController {
         if (keyEvent.getCode() == KeyCode.S && keyEvent.isControlDown()) {
             exportImage();
         }
-        if (keyEvent.getCode() == KeyCode.P ) {
+        if (keyEvent.getCode() == KeyCode.P) {
             drawingType = DrawingOperation.DrawingType.BRUSH;
             currentShape = DrawingOperation.Shape.LINE;
         }
-        if (keyEvent.getCode() == KeyCode.E ) {
+        if (keyEvent.getCode() == KeyCode.E) {
             drawingType = DrawingOperation.DrawingType.ERASER;
             currentShape = DrawingOperation.Shape.LINE;
         }
-
 
 
     }
