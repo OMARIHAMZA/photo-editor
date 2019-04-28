@@ -4,10 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ColorPicker;
@@ -16,29 +14,18 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.transform.Transform;
-import javafx.stage.FileChooser;
 import models.DrawingOperation;
 
-import javax.imageio.ImageIO;
-import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static javafx.scene.input.MouseEvent.*;
-import static javax.swing.text.html.parser.DTDConstants.MODEL;
 
 public class DrawingWindowController extends MasterController {
 
@@ -302,12 +289,8 @@ public class DrawingWindowController extends MasterController {
     @FXML
     void undoStep(ActionEvent event) {
         if (drawingOperations.isEmpty()) return;
-        if (drawingOperations.size() == 1) {
-            // TODO: 4/17/2019 DISABLE THE UNDO BUUTTON
-        }
         drawingOperations.remove(currentFigure);
         currentFigure -= 1;
-        System.err.println(drawingOperations);
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         for (HashMap.Entry<Integer, DrawingOperation> entry : drawingOperations.entrySet()) {
             entry.getValue().draw();
@@ -322,7 +305,7 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     private void rgb2hsv() {
-        if (!checkImageView()) return;
+        if (checkImageView()) return;
         Image rgbImage = imageView.getImage();
         int width = (int) rgbImage.getWidth();
         int height = (int) rgbImage.getHeight();
@@ -370,7 +353,7 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     private void argb2Cmyk() {
-        if (!checkImageView()) return;
+        if (checkImageView()) return;
         final Image rgbImage = imageView.getImage();
         final int width = (int) rgbImage.getWidth();
         final int height = (int) rgbImage.getHeight();
@@ -410,7 +393,7 @@ public class DrawingWindowController extends MasterController {
 
     @FXML
     private void hsv2rgb() {
-        if (!checkImageView()) return;
+        if (checkImageView()) return;
         Image hsvImage = imageView.getImage();
         int width = (int) hsvImage.getWidth();
         int height = (int) hsvImage.getHeight();
@@ -497,9 +480,18 @@ public class DrawingWindowController extends MasterController {
     private boolean checkImageView(){
         if (imageView.getImage() == null){
             showMessage("Select an image first!", true);
-            return false;
-        }else{
             return true;
+        }else{
+            return false;
         }
+    }
+
+
+    @FXML
+    void copyImage() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putImage(getImage(stackPane));
+        clipboard.setContent(content);
     }
 }

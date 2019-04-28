@@ -35,6 +35,7 @@
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#undoStep" text="Undo     ctrl+z" />
                         <MenuItem mnemonicParsing="false" onAction="#clearAll" text="Clear" />
+                  <MenuItem mnemonicParsing="false" onAction="#copyImage" text="Copy Image" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Tools">
